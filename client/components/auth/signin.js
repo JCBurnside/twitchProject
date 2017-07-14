@@ -2,8 +2,8 @@
 	angular
 		.module('twitchproject.auth.signin',['ui.router'])
 		.config(signinConfig);
-	function signinConfig(stateProvider) {
-		stateProvider
+	function signinConfig($stateProvider) {
+		$stateProvider
 			.state('signin',{
 				url:'/signin',
 				templateUrl:'/components/auth/signin.html',
@@ -18,7 +18,7 @@
 		this.login=()=>{
 			UsersService.login(this.user).then(res=>{
 				console.log(res);
-				$state.go('define');
+
 			});
 		};
 	}

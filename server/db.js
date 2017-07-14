@@ -1,3 +1,4 @@
+var bcrypt=require('bcryptjs')
 module.exports=function(db,mongoose=require('mongoose')){
 	this.url=db;
 	this.mongoose=mongoose;
@@ -16,11 +17,35 @@ module.exports=function(db,mongoose=require('mongoose')){
 			username:username,
 			password:hashedPass
 		})
+		console.log(user)
 		if(!cb||typeof(cb)!=="function")return user.save();
 		user.save(cb);
 	}
 	this.login=function(username,password,cb=null){
-		this.mongoose.findOne({username:username})
+		this.User.findOne({username:username}).then((err,user)=>{
+			if(err){
+				if(!cb)
+					return false;
+				cb(err,null);
+			}
+			if(user){
+				bcrypt.compare(password,user.password,(err,matches)=>{
+					if(matches){
+						if(!cb)
+							return true;
+						cb(null,user)
+					}else{
+						if(!cb)
+							return false;
+						cb(err,null);
+					}
+				})
+			}else {
+				if(!cb)
+					return false;
+				cb(err,null);
+			}
+		});
 	}
 	return this;
 }

@@ -3,8 +3,8 @@ var router=require('express').Router(),
 	jwt=require('jsonwebtoken');
 router.post('/',(req,res)=>{
 	var username=req.body.user.username,
-		pass=bcrypt.hashSync(req.body.user.password,10);
-	db.createUser(username,pass,(err,user)=>{
+		password=req.body.user.password;
+	db.createUser(username,password,(err,user)=>{
 		if(err){
 			console.log(err);
 			res.status(500).send(err);
@@ -14,7 +14,7 @@ router.post('/',(req,res)=>{
 		res.status(200).json({
 			user:user,
 			message:'created',
-			token:jwt.sign({id:user.id},process.env.SECRET,{expiresIn:60*60*24})
+			token:user.genToken()
 		});
 	});
 });

@@ -1,7 +1,8 @@
 (()=>{
 	var app=angular.module('twitchproject',[
 		'ui.router',
-		'twitchproject.auth.signin'
+		'twitchproject.auth.signin',
+		'twitchproject.auth.signup'
 	]);
 	function config($urlRouterProvider){
 		$urlRouterProvider.otherwise('/signin');
@@ -14,8 +15,8 @@
 	angular
 		.module('twitchproject.auth.signin',['ui.router'])
 		.config(signinConfig);
-	function signinConfig(stateProvider) {
-		stateProvider
+	function signinConfig($stateProvider) {
+		$stateProvider
 			.state('signin',{
 				url:'/signin',
 				templateUrl:'/components/auth/signin.html',
@@ -30,13 +31,43 @@
 		this.login=()=>{
 			UsersService.login(this.user).then(res=>{
 				console.log(res);
-				$state.go('define');
+
 			});
 		};
 	}
 	SigninController.$inject=['$state','UsersService'];	
 })();
 
+
+(()=>{
+	angular
+		.module('twitchproject.auth.signup',['ui.router'])
+		.config(signupConfig);
+		function signupConfig($stateProvider){
+			$stateProvider
+			.state('signup',{
+				url:'/signup',
+				templateUrl:'/components/auth/signup.html',
+				controller:SignUpController,
+				controllerAs:'ctrl',
+				bindToController:this
+			});
+		}
+		signupConfig.$inject=['$stateProvider'];
+		function SignUpController($state,UsersService){
+			var vm=this
+			vm.user={};
+			vm.message="Sign up for an account!";
+			vm.submit=function(){
+				console.log(vm.user);
+				UsersService.create(vm.user).then(function(res){
+					console.log(res);
+
+				});
+			};
+		}
+		SignUpController.$inject=['$state','UsersService'];
+})();
 (()=>{
 	angular.module('twitchproject')
 	.directive('userlinks',function(){
@@ -113,7 +144,7 @@
 
 				}
 				UsersService.prototype.create = function(user) {
-					var userPromise=$http.post(API_BASE+'user',{
+					var userPromise=$http.post(API_BASE+'signup',{
 						user:user
 					});
 					userPromise.then(function(res){
@@ -127,7 +158,7 @@
 						user:user
 					});
 					loginPromise.then(function(res){
-						SessionToken.set(res.data.sessionToken);
+						SessionToken.set(res.data.token);
 						CU.set(res.data.user);
 					});
 					return loginPromise;

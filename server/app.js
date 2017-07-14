@@ -6,9 +6,10 @@ var express=require('express'),
 // console.log(db);
 db.connect();
 app.use(bodyParser.json());
+app.use(require('./middleware/headers.js'))
 app.use('/api/test',(_,res)=>res.send("HELLO"));
 app.use('/api/signup',require('./routes/signup.js'));
-
+app.use('/api/login',require('./routes/signin.js'));
 port=process.env.PORT||3000
 app.listen(port,()=>{
 	console.log("APP IS LISTENING ON PORT "+port);

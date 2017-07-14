@@ -7,7 +7,7 @@
 
 				}
 				UsersService.prototype.create = function(user) {
-					var userPromise=$http.post(API_BASE+'user',{
+					var userPromise=$http.post(API_BASE+'signup',{
 						user:user
 					});
 					userPromise.then(function(res){
@@ -21,7 +21,7 @@
 						user:user
 					});
 					loginPromise.then(function(res){
-						SessionToken.set(res.data.sessionToken);
+						SessionToken.set(res.data.token);
 						CU.set(res.data.user);
 					});
 					return loginPromise;

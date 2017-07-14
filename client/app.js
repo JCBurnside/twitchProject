@@ -1,7 +1,8 @@
 (()=>{
 	var app=angular.module('twitchproject',[
 		'ui.router',
-		'twitchproject.auth.signin'
+		'twitchproject.auth.signin',
+		'twitchproject.auth.signup'
 	]);
 	function config($urlRouterProvider){
 		$urlRouterProvider.otherwise('/signin');
