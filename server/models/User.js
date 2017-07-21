@@ -1,4 +1,5 @@
-var bcrypt=require('bcryptjs');
+var bcrypt=require('bcryptjs'),
+	jwt=require('jsonwebtoken');
 module.exports=function(mongoose){
 	var US=new mongoose.Schema({
 		username:{type:String},
@@ -25,7 +26,7 @@ module.exports=function(mongoose){
 		});
 	});
 	US.methods.genToken=function(){
-		return jwt.sign({id:this.id},process.env.SECRET,{expiresIn:60*60*24})
+		return jwt.sign({id:this._id},process.env.SECRET,{expiresIn:60*60*24})
 	}
 	return mongoose.model('User',US);
 }

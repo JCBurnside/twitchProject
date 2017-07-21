@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "./node_modules/.bin/http-server -a localhost -p 8080",
-    "prestart": "npm install",
+    "prestart": "gulp build;npm install",
     "postinstall": "bower install"
   },
   "author": "",
