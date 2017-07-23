@@ -5,8 +5,9 @@
   "main": "app.js",
   "scripts": {
     "start": "./node_modules/.bin/http-server -a localhost -p 8080",
-    "prestart": "gulp build;npm install",
-    "postinstall": "bower install"
+    "prestart": "gulp bundle && npm install",
+    "postinstall": "bower install",
+    "devStart": "gulp watch"
   },
   "author": "",
   "license": "MIT",

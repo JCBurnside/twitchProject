@@ -4,13 +4,13 @@
 		UserLinksController.$inject=['$state','CU','SessionToken'];
 		function UserLinksController($state,CU,SessionToken) {
 			this.user=()=>CU.get()||{};
-			this.signedIn=()=>!!(this.user().id);
+			this.signedIn=()=>!!(this.user().id||false);
 			this.logout=()=>{
 				CU.clear();
 				SessionToken.clear();
 				$state.go('signin');
 			}
-			this.isLinked=()=>!!(this.user().twitchId);
+			this.isLinked=()=>!!(this.user().twitchId||false);
 		}
 		return{
 			scope:{},

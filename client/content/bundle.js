@@ -1,15 +1,17 @@
+import * as configs from './config';
 (()=>{
 	var app=angular.module('twitchproject',[
 		'ui.router',
 		'twitchproject.auth.signin',
-		'twitchproject.auth.signup'
+		'twitchproject.auth.signup',
+		'twitchproject.sug'
 	]);
 	function config($urlRouterProvider){
 		$urlRouterProvider.otherwise('/signin');
 	}
 	config.$inject=['$urlRouterProvider'];
 	app.config(config);
-	app.constant('API_BASE','//localhost:3000/api/');
+	app.constant('API_BASE',location.hostname==="localhost"?'//localhost:3000/api/':'');
 })();
 (()=>{
 	angular
@@ -74,13 +76,13 @@
 		UserLinksController.$inject=['$state','CU','SessionToken'];
 		function UserLinksController($state,CU,SessionToken) {
 			this.user=()=>CU.get()||{};
-			this.signedIn=()=>!!(this.user().id);
+			this.signedIn=()=>!!(this.user().id||false);
 			this.logout=()=>{
 				CU.clear();
 				SessionToken.clear();
 				$state.go('signin');
 			}
-			this.isLinked=()=>!!(this.user().twitchId);
+			this.isLinked=()=>!!(this.user().twitchId||false);
 		}
 		return{
 			scope:{},
@@ -90,6 +92,38 @@
 			templateUrl:'/components/auth/userlinks.html'
 		}
 	})
+})();
+(()=>{
+    angular
+        .module('twitchproject.feat',['ui.router'])
+        .config(featConfig);
+    function featConfig($stateProvider) {
+        $stateProvider
+            .state('',{
+
+            });
+    }
+})();
+(()=>{
+    angular
+        .module('twitchproject.sug',['ui.router'])
+        .config(SuggestionConfig);
+    function SuggestionConfig($stateProvider) {
+        $stateProvider
+            .state('suggestions',{
+                url:'/suggestions',
+                templateUrl:'/components/suggestion/suggestion.html',
+                controller:SuggestionController,
+                controllerAs:'ctrl',
+                bindToController:this
+            });
+    }
+    SuggestionConfig.$inject=['$stateProvider'];
+    function SuggestionController($state,$sce) {
+        // "https://formspree.io/"+
+        this.email=$sce.trustAsResourceUrl("https://formspree.io/"+"jcburnside97@gmail.com");
+    }
+    SuggestionController.$inject=['$state','$sce'];
 })();
 (function(){
 	angular.module('twitchproject')

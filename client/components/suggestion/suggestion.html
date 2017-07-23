@@ -1,0 +1,23 @@
+<div class="container">
+    <h2>Suggest something to me!!!</h2>
+    <p>A few rules to go over.
+        <ul>
+            <li>NOTHING PORNOGRAPHIC.  I don't want to see that and neither does twitch</li>
+            <li>No hate speech/religious games.  I do not tolerate intolerance.</li>
+            <li>Be resonable.  Don't just say &quot;Your x is trash&quot;.</li>
+            <li>If submitting a game please put a link to it.</li>
+            <li>This is not for commentary of my skill or prefrence.</li>
+        </ul>
+    </p>
+    <form action={{ctrl.email}} method="POST">
+        <input type="text" name="Title" placeholder="Title" class="form-control col-md-7 col-xs-push-1"/>
+        <select name="Type" class="form-control col-md-7 col-xs-push-1">
+            <option class="form-control">Game</option>
+            <option class="form-control" value="Website">Website Feedback</option>
+            <option class="form-control">Stream</option>
+            <option class="form-control">Other</option>
+        </select>
+        <textarea rows="3" name="details" class="form-control col-md-7 col-xs-push-1"></textarea>
+        <input type="submit" value="Send" class="form-control col-md-7 col-xs-push-1 btn btn-primary"/>
+    </form>
+</div>
