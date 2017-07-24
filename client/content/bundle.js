@@ -1,4 +1,4 @@
-import * as configs from './config';
+// import * as configs from './config';
 (()=>{
 	var app=angular.module('twitchproject',[
 		'ui.router',
@@ -76,7 +76,7 @@ import * as configs from './config';
 		UserLinksController.$inject=['$state','CU','SessionToken'];
 		function UserLinksController($state,CU,SessionToken) {
 			this.user=()=>CU.get()||{};
-			this.signedIn=()=>!!(this.user().id||false);
+			this.signedIn=()=>!!(this.user()._id||false);
 			this.logout=()=>{
 				CU.clear();
 				SessionToken.clear();
@@ -92,6 +92,36 @@ import * as configs from './config';
 			templateUrl:'/components/auth/userlinks.html'
 		}
 	})
+})();
+
+(()=>{
+    angular.module('twitchproject')
+    .directive('leaderboard',function(){
+        LeaderBoardController.$inject=['$scope','$state','CU','ByteService'];
+        function LeaderBoardController($scope,$state,CU,ByteService){
+            
+            this.leaders=undefined;
+            this.getLeaders=()=>ByteService.getTop($scope.count||10).then(res=>this.leaders=res.data);
+            this.format=bytes=>{
+                if(bytes/1000000000)
+                    return "%.2fB".format(bytes/1000000000);
+                if(bytes/1000000)
+                    return "%.2fM".format(bytes/1000000);
+                if(bytes/1000)
+                    return "%.2fK".format(bytes/1000);
+                return bytes;
+            }
+        };
+        return{
+            scope:{
+                count:'=count'
+            },
+            controller:LeaderBoardController,
+            controllerAs:'ctrl',
+            bindToController:true,
+            templateUrl:'/components/bytes/leaderboard.html'
+        }
+    });
 })();
 (()=>{
     angular
@@ -125,6 +155,38 @@ import * as configs from './config';
     }
     SuggestionController.$inject=['$state','$sce'];
 })();
+(function () {
+    angular.module('twitchproject')
+        .service('BytesService', [
+            '$http', 'API_BASE', 'SessionToken', 'CU',
+            function ($http, API_BASE, SessionToken, CU) {
+                function BytesService() {
+
+                }
+                BytesService.prototype.getTop = function (amount) {
+                    return $http.get(API_BASE + 'top/' + amount).catch(function (err) {
+                        console.log(err);
+
+                    });
+                };
+                BytesService.prototype.transfer = function (transferId, amount) {
+                    if (!CU.isSignedIn() || !CU.get().twitchId)
+                        throw "NEED TO BE " + CU.isSignedIn() ? "linked to twitch" : "signed in";
+                    else
+                        return $http.put(API_BASE + '/transfer/' + CU.get()._id, { to: transferId, amount: amount })
+                };
+                BytesService.prototype.giveRandom = function () {
+                    if (!CU.isSignedIn() || !CU.get().twitchId)
+                        throw "NEED TO BE " + CU.isSignedIn() ? "linked to twitch" : "signed in";
+                    else
+                        return $http.put(API_BASE + '/rando/' + CU.get()._id)
+                            .catch(function () {
+
+                            });
+                };
+            }
+        ])
+})();
 (function(){
 	angular.module('twitchproject')
 		.service('CU',['$window',function($window){
@@ -144,7 +206,7 @@ import * as configs from './config';
 				$window.localStorage.removeItem('currentUser');
 			};
 			CurrentUser.prototype.isSignedIn = function() {
-				return !!this.get().id;
+				return !!this.get()._id;
 			};
 			return new CurrentUser();
 		}]);

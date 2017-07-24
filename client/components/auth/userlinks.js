@@ -4,7 +4,7 @@
 		UserLinksController.$inject=['$state','CU','SessionToken'];
 		function UserLinksController($state,CU,SessionToken) {
 			this.user=()=>CU.get()||{};
-			this.signedIn=()=>!!(this.user().id||false);
+			this.signedIn=()=>!!(this.user()._id||false);
 			this.logout=()=>{
 				CU.clear();
 				SessionToken.clear();

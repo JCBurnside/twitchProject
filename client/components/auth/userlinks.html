@@ -1,7 +1,7 @@
 <!-- ctrl.signedIn() -->
 <ul class="nav navbar-nav">
 	<li><a ui-sref="leaderboard">Leaderboard</a></li>
-	<li><a ui-sref="actions">Byte Actions</a></li>
+	<li><a ui-sref="actions" ng-show="!ctrl.isLinked()&&ctrl.signedIn()">Byte Actions</a></li>
 	<li><a ui-sref="suggestions">Suggest something</a></li>
 	<li><a ui-sref="linkAccount" ng-show="!ctrl.isLinked()&&ctrl.signedIn()">Link Accounts</a></li>	
 </ul>

@@ -17,7 +17,7 @@
 				$window.localStorage.removeItem('currentUser');
 			};
 			CurrentUser.prototype.isSignedIn = function() {
-				return !!this.get().id;
+				return !!this.get()._id;
 			};
 			return new CurrentUser();
 		}]);

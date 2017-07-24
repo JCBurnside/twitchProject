@@ -1,0 +1,17 @@
+<table>
+    <thead ng-repeat-start>
+        <tr>
+            <td>Username</td>
+            <td>Bytes</td>
+            <td>Date Joined</td>
+        </tr>
+    </thead>
+    <tbody ng-repeat="item in ctrl.leaders">
+        <tr>
+            <td>{{item.username}}</td>
+            <td>{{item.bytes}}</td>
+            <td>{{item.dateJoined}}</td>
+        </tr>
+    </tbody>
+</table>
+<div ng-show="!ctrl.leaders||ctrl.leaders.length<1">Still loading...</div>
