@@ -14,9 +14,9 @@ body {
 input[type=text],input[type=number],input[type=password]{
   color:#606060;
 }
-.table-striped tbody tr:nth-child(even){
+.table-striped tbody :nth-child(even){
   background-color:#202020 !important;
 }
-.table-striped tbody tr:nth-child(odd){
-  background-color:#303030 !important;
+.table-striped tbody :nth-child(odd){
+  background-color:#404040 !important;
 }

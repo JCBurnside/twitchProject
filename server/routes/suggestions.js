@@ -1,0 +1,33 @@
+var router=require('express').Router(),
+    requireAuth=require('../middleware/requireAuth');
+router.delete('/:id',requireAuth,(req,res)=>{
+    db.deleteSug(req.user,req.params.id,(err,sug)=>{
+        if(err){
+            console.log(err);
+            res.status(418).send(err);
+        }
+        else
+            res.send(true);
+    });
+})
+router.get('/',(req,res)=>{
+    db.getSugs((err,sugs)=>{
+        if(err){
+            console.log(err);
+            res.status(490).send(err);
+        }
+        else
+            res.send(sugs);
+    });
+})
+router.post('/',requireAuth,(req,res)=>{
+    db.createSug(req.user,req.body.sug,(err,sugs)=>{
+        if(err){
+            console.log(err);
+            res.status(479).send(err);
+        }
+        else
+            res.send(sugs);
+    });
+})
+module.exports=router

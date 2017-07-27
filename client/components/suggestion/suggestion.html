@@ -10,14 +10,14 @@
         </ul>
     </p>
     <form>
-        <input type="text" ng-model="ctrl.sug.Title" placeholder="Title" class="form-control col-md-7 col-xs-push-1"/>
-        <select ng-model="ctrl.sug.Type" class="form-control col-md-7 col-xs-push-1">
-            <option class="form-control" selected="selected">Game</option>
+        <input type="text" ng-model="ctrl.sug.title" placeholder="Title" class="form-control col-md-7 col-xs-push-1"/>
+        <select ng-model="ctrl.sug.type" class="form-control col-md-7 col-xs-push-1">
+            <option class="form-control" >Game</option>
             <option class="form-control" value="Website">Website Feedback</option>
             <option class="form-control">Stream</option>
             <option class="form-control">Other</option>
         </select>
-        <textarea rows="3" ng-model="ctrl.sug.details" class="form-control col-md-7 col-xs-push-1"></textarea>
+        <textarea rows="3" ng-model="ctrl.sug.msg" class="form-control col-md-7 col-xs-push-1"></textarea>
         <input ng-click="ctrl.submit()" value="Send" class="form-control col-md-7 col-xs-push-1 btn btn-primary"/>
     </form>
 </div>

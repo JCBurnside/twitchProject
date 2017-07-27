@@ -3,8 +3,10 @@ var bcrypt = require('bcryptjs'),
 module.exports = function (mongoose) {
 	var US = new mongoose.Schema({
 		username: { type: String,
-					unique:true},
-		password: { type: String },
+					unique:true,
+					required:true},
+		password: { type: String,
+					required:true },
 		bytes:Number
 	});
 	US.pre('save', function (next) {
@@ -12,16 +14,12 @@ module.exports = function (mongoose) {
 		console.log("IN PRE-SAVE")
 		bcrypt.genSalt(10, (err, salt) => {
 			if (err) {
-				console.log("GEN SALT ERRORED")
 				return next(err);
 			}
 			bcrypt.hash(user.password, salt, (err, hash) => {
 				if (err) {
-					console.log("HASH FAILED");
-					console.log(err);
 					return next(err);
 				}
-				console.log(hash);
 				user.password = hash;
 				next();
 			});
@@ -29,6 +27,14 @@ module.exports = function (mongoose) {
 	});
 	US.methods.genToken = function () {
 		return jwt.sign({ id: this._id }, process.env.SECRET, { expiresIn: 60 * 60 * 24 })
+	}
+	US.statics.random=function(cb){
+		this.count((err,count)=>{
+			if(err)
+				return cb(err);
+			let rand=Math.floor(Math.random()*count);
+			this.findOne().skip(rand).exec(cb);
+		})
 	}
 	return mongoose.model('User', US);
 }

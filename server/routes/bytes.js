@@ -1,0 +1,30 @@
+module.exports={
+    rando:function(req,res){
+        var amount=Math.abs(eval(req.params.amount));
+        db.random(req.user,amount,(err,amnt)=>{
+            if(err){
+                console.log(err)
+                res.status(500).send(err);
+            }else
+                res.send(amnt);
+        })
+    },
+    transfer:function(req,res) {
+        db.transfer(req.user,eval(req.body.amount),req.params.target,(err,amnt)=>{
+            if(err)
+                res.status(500).send(err);
+            else
+                res.send(amnt);
+        })
+    },
+    dump:function(req,res){
+        console.log("DUMP")
+        db.dump(req.user,(err,dumped)=>{
+            if(err){
+                console.log(err);
+                res.status(500).send(err);
+            }else
+                res.send(true);
+        })
+    }
+}

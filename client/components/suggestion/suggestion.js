@@ -23,12 +23,20 @@
     function SuggestionController($state,$http,API_BASE) {
         this.submit=()=>{
             $http.post(API_BASE+'suggestions',{sug:this.sug})
+            .then((res)=>{
+                if(res.data)
+                    $state.go('suggestions')
+            })
         }
     }
-    SuggestionController.$inject=['$state'];
+    SuggestionController.$inject=['$state','$http','API_BASE'];
     function SuggestionsController($state,$http,API_BASE) {
-        this.delete=sug=>{
-            $http.delete(API_BASE+'suggestions/'+sug._id)
+        this.delete=(sug,i)=>{
+            $http.delete(API_BASE+'suggestions/'+sug)
+            .then(res=>{
+                if(res.data)
+                    this.suggestions.splice(i,1);
+            })
             .catch(err=>console.log(err));
         }
         this.suggestions=[];

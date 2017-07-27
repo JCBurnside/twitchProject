@@ -1,8 +1,8 @@
 <a class="btn btn-primary" ui-sref="suggestion">Suggest Something</a>
-<div ng-repeat="sug in ctrl.suggestions">
+<div ng-repeat="(i,sug) in ctrl.suggestions">
     <div class="tile">
         <h3>{{sug.title}}</h3>
         <p>{{sug.desc}}</p>
-        <button class="btn btn-danger" ng-show="sug.owner._id==ctrl.user()._id" ng-click={{ctrl.delete(sug)}}>Delete</button>
+        <button class="btn btn-danger" ng-show="sug.by==ctrl.user()._id" ng-click="ctrl.delete(sug._id,i)">Delete</button>
     </div>
 </div>

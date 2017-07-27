@@ -13,17 +13,17 @@
 
                     });
                 };
-                BytesService.prototype.transfer = function (transferId, amount) {
+                BytesService.prototype.transfer = function (transfer, amount) {
                     if (!CU.isSignedIn() )
-                        throw "NEED TO BE " + CU.isSignedIn() ? "linked to twitch" : "signed in";
+                        throw "NEEDS TO BE " + CU.isSignedIn() ? "linked to twitch" : "signed in";
                     else
-                        return $http.put(API_BASE + 'transfer/' + CU.get()._id, { to: transferId, amount: amount })
+                        return $http.put(API_BASE + 'transfer/'+transfer,{amount:amount})
                 };
-                BytesService.prototype.giveRandom = function () {
+                BytesService.prototype.giveRandom = function (amt) {
                     if (!CU.isSignedIn() )
-                        throw "NEED TO BE " + CU.isSignedIn() ? "linked to twitch" : "signed in";
+                        throw "NEEDS TO BE " + CU.isSignedIn() ? "linked to twitch" : "signed in";
                     else
-                        return $http.put(API_BASE + 'rando/' + CU.get()._id)
+                        return $http.put(API_BASE + 'rando/'+amt)
                             .catch(function () {
 
                             });

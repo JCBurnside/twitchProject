@@ -94,6 +94,33 @@
 })();
 (()=>{
     angular
+        .module('twitchproject.feat',['ui.router'])
+        .config(featConfig);
+    function featConfig($stateProvider) {
+        $stateProvider
+            .state('feat',{
+                url:'/featured',
+                templateUrl:'/components/featured/featured.html',
+                controller:FeaturedController,
+                controllerAs:'ctrl',
+                bindToController:this
+            });
+    };
+    featConfig.$inject=['$stateProvider'];
+    function FeaturedController($state,$http,API_BASE,$sce) {
+        this.feat=undefined;
+        $http.get(API_BASE+'/featured').then(res=>{
+            this.feat=res.data;
+            this.feat.forEach((clip,i)=>{
+                this.feat[i].img=$sce.trustAsResourceUrl(clip.img);
+            });
+        });
+    }
+    FeaturedController.$inject=['$state','$http','API_BASE','$sce'];
+})();
+
+(()=>{
+    angular
         .module('twitchproject.byte',['ui.router'])
         .config(byteConfig);
     function byteConfig($stateProvider) {
@@ -109,18 +136,22 @@
     byteConfig.$inject=['$stateProvider'];
     function ByteController($state,BytesService,CU,$http,API_BASE){
         this.signedIn=()=>CU.isSignedIn();
-        this.tranfer=function(){
+        this.transfer=function(){
             var to = prompt("Who would you like to transfer to too?",CU.get().username);
-            $http.get(API_BASE+"verify").then(res=>{
-                var num= eval(prompt("How much?","0"));
-                BytesService.transfer(res.data,num);
+            $http.get(API_BASE+"verify/"+to).then(res=>{
+                if(res.data){
+                    var num= eval(prompt("How much?","0"));
+                    BytesService.transfer(to,num);
+                }
+                else
+                    alert("that person does not exist"); 
             }).catch(err=>console.log(err));
         };
         this.Dump=()=>{
-            $http.delete(API_BASE+'bytes/'+CU.get()._id);
+            $http.delete(API_BASE+'dump/');
         };
         this.randomTransfer=()=>{
-            BytesService.giveRandom();
+            BytesService.giveRandom(prompt("How much would you like to give?","0"));
         };
     }
     ByteController.$inject=['$state','BytesService','CU','$http','API_BASE']
@@ -166,33 +197,6 @@
 })();
 (()=>{
     angular
-        .module('twitchproject.feat',['ui.router'])
-        .config(featConfig);
-    function featConfig($stateProvider) {
-        $stateProvider
-            .state('feat',{
-                url:'/featured',
-                templateUrl:'/components/featured/featured.html',
-                controller:FeaturedController,
-                controllerAs:'ctrl',
-                bindToController:this
-            });
-    };
-    featConfig.$inject=['$stateProvider'];
-    function FeaturedController($state,$http,API_BASE,$sce) {
-        this.feat=undefined;
-        $http.get(API_BASE+'/featured').then(res=>{
-            this.feat=res.data;
-            this.feat.forEach((clip,i)=>{
-                this.feat[i].img=$sce.trustAsResourceUrl(clip.img);
-            });
-        });
-    }
-    FeaturedController.$inject=['$state','$http','API_BASE','$sce'];
-})();
-
-(()=>{
-    angular
         .module('twitchproject.sug',['ui.router'])
         .config(SuggestionConfig);
     function SuggestionConfig($stateProvider) {
@@ -216,12 +220,20 @@
     function SuggestionController($state,$http,API_BASE) {
         this.submit=()=>{
             $http.post(API_BASE+'suggestions',{sug:this.sug})
+            .then((res)=>{
+                if(res.data)
+                    $state.go('suggestions')
+            })
         }
     }
-    SuggestionController.$inject=['$state'];
+    SuggestionController.$inject=['$state','$http','API_BASE'];
     function SuggestionsController($state,$http,API_BASE) {
-        this.delete=sug=>{
-            $http.delete(API_BASE+'suggestions/'+sug._id)
+        this.delete=(sug,i)=>{
+            $http.delete(API_BASE+'suggestions/'+sug)
+            .then(res=>{
+                if(res.data)
+                    this.suggestions.splice(i,1);
+            })
             .catch(err=>console.log(err));
         }
         this.suggestions=[];
@@ -264,17 +276,17 @@
 
                     });
                 };
-                BytesService.prototype.transfer = function (transferId, amount) {
+                BytesService.prototype.transfer = function (transfer, amount) {
                     if (!CU.isSignedIn() )
-                        throw "NEED TO BE " + CU.isSignedIn() ? "linked to twitch" : "signed in";
+                        throw "NEEDS TO BE " + CU.isSignedIn() ? "linked to twitch" : "signed in";
                     else
-                        return $http.put(API_BASE + 'transfer/' + CU.get()._id, { to: transferId, amount: amount })
+                        return $http.put(API_BASE + 'transfer/'+transfer,{amount:amount})
                 };
-                BytesService.prototype.giveRandom = function () {
+                BytesService.prototype.giveRandom = function (amt) {
                     if (!CU.isSignedIn() )
-                        throw "NEED TO BE " + CU.isSignedIn() ? "linked to twitch" : "signed in";
+                        throw "NEEDS TO BE " + CU.isSignedIn() ? "linked to twitch" : "signed in";
                     else
-                        return $http.put(API_BASE + 'rando/' + CU.get()._id)
+                        return $http.put(API_BASE + 'rando/'+amt)
                             .catch(function () {
 
                             });

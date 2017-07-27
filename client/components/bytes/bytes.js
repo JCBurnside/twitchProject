@@ -15,18 +15,22 @@
     byteConfig.$inject=['$stateProvider'];
     function ByteController($state,BytesService,CU,$http,API_BASE){
         this.signedIn=()=>CU.isSignedIn();
-        this.tranfer=function(){
+        this.transfer=function(){
             var to = prompt("Who would you like to transfer to too?",CU.get().username);
-            $http.get(API_BASE+"verify").then(res=>{
-                var num= eval(prompt("How much?","0"));
-                BytesService.transfer(res.data,num);
+            $http.get(API_BASE+"verify/"+to).then(res=>{
+                if(res.data){
+                    var num= eval(prompt("How much?","0"));
+                    BytesService.transfer(to,num);
+                }
+                else
+                    alert("that person does not exist"); 
             }).catch(err=>console.log(err));
         };
         this.Dump=()=>{
-            $http.delete(API_BASE+'bytes/'+CU.get()._id);
+            $http.delete(API_BASE+'dump/');
         };
         this.randomTransfer=()=>{
-            BytesService.giveRandom();
+            BytesService.giveRandom(prompt("How much would you like to give?","0"));
         };
     }
     ByteController.$inject=['$state','BytesService','CU','$http','API_BASE']
