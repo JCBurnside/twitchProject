@@ -22,6 +22,7 @@ module.exports=function(db,mongoose=require('mongoose')){
 		user.save(cb);
 	}
 	this.login=function(username,password,cb=null){
+		console.log("LOGIN CALLED",username);
 		this.User.findOne({username:username}).then((err,user)=>{
 			if(err){
 				if(!cb)
@@ -29,6 +30,7 @@ module.exports=function(db,mongoose=require('mongoose')){
 				cb(err,null);
 			}
 			if(user){
+				console.log("FOUND ONE");
 				bcrypt.compare(password,user.password,(err,matches)=>{
 					if(matches){
 						if(!cb)
@@ -39,8 +41,9 @@ module.exports=function(db,mongoose=require('mongoose')){
 							return false;
 						cb(err,null);
 					}
-				})
+				},i=>console.log(i));
 			}else {
+				console.log("USER NOT FOUND")
 				if(!cb)
 					return false;
 				cb(err,null);

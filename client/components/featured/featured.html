@@ -1,7 +1,11 @@
 <div>
+    <span ng-show="!ctrl.feat">Still loading</span>
     <ul class="list-inline" ng-repeat="clip in ctrl.clips">
-        <li>
-            TEST
+        <li id={{clip.id}}>
+            <!-- <a sref="/clips/{{clip.id}}" class="clip"> -->
+                <img src={{clip.img}}/>
+                <span class="clipDesc">{{clip.desc}}</span>
+            <!-- </a> -->
         </li>
     </ul>
 </div>

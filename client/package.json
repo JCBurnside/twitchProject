@@ -5,13 +5,13 @@
   "main": "app.js",
   "scripts": {
     "start": "./node_modules/.bin/http-server -a localhost -p 8080",
-    "prestart": "gulp bundle && npm install",
+    "prestart": "sass main.scss content/app.css && gulp bundle && npm install",
     "postinstall": "bower install",
     "devStart": "gulp watch"
   },
   "author": "",
   "license": "MIT",
-  "devDependencies": {
+  "dependencies": {
     "bower": "^1.8.0",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",

@@ -1,10 +1,11 @@
-// import * as configs from './config';
 (()=>{
 	var app=angular.module('twitchproject',[
 		'ui.router',
 		'twitchproject.auth.signin',
 		'twitchproject.auth.signup',
-		'twitchproject.sug'
+		'twitchproject.sug',
+		'twitchproject.leader',
+		'twitchproject.byte'
 	]);
 	function config($urlRouterProvider){
 		$urlRouterProvider.otherwise('/signin');
@@ -33,7 +34,6 @@
 		this.login=()=>{
 			UsersService.login(this.user).then(res=>{
 				console.log(res);
-
 			});
 		};
 	}
@@ -64,7 +64,6 @@
 				console.log(vm.user);
 				UsersService.create(vm.user).then(function(res){
 					console.log(res);
-
 				});
 			};
 		}
@@ -93,15 +92,57 @@
 		}
 	})
 })();
-
 (()=>{
+    angular
+        .module('twitchproject.byte',['ui.router'])
+        .config(byteConfig);
+    function byteConfig($stateProvider) {
+        $stateProvider
+            .state('byte',{
+                url:'/bytes',
+                templateUrl:'/components/bytes/bytes.html',
+                controller:ByteController,
+                controllerAs:'ctrl',
+                bindToController:this
+            });
+    };
+    byteConfig.$inject=['$stateProvider'];
+    function ByteController($state,BytesService,CU,$http,API_BASE){
+        this.signedIn=()=>CU.isSignedIn();
+        this.tranfer=function(){
+            var to = prompt("Who would you like to transfer to too?",CU.get().username);
+            $http.get(API_BASE+"verify").then(res=>{
+                var num= eval(prompt("How much?","0"));
+                BytesService.transfer(res.data,num);
+            }).catch(err=>console.log(err));
+        };
+        this.Dump=()=>{
+            $http.delete(API_BASE+'bytes/'+CU.get()._id);
+        };
+        this.randomTransfer=()=>{
+            BytesService.giveRandom();
+        };
+    }
+    ByteController.$inject=['$state','BytesService','CU','$http','API_BASE']
+})();
+(()=>{
+    angular
+    .module('twitchproject.leader',['ui.router'])
+    .config(leaderConfig);
+    function leaderConfig($stateProvider){
+        $stateProvider
+            .state('leaderboard',{
+                url:'/leaderboard',
+                template:'<leaderboard count="1"/>'
+            });
+    };
     angular.module('twitchproject')
     .directive('leaderboard',function(){
-        LeaderBoardController.$inject=['$scope','$state','CU','ByteService'];
-        function LeaderBoardController($scope,$state,CU,ByteService){
-            
+        LeaderBoardController.$inject=['$scope','$state','CU','BytesService'];
+        function LeaderBoardController($scope,$state,CU,BytesService){
+            console.log($scope)
             this.leaders=undefined;
-            this.getLeaders=()=>ByteService.getTop($scope.count||10).then(res=>this.leaders=res.data);
+            BytesService.getTop($scope.count||10).then(res=>this.leaders=res.data);
             this.format=bytes=>{
                 if(bytes/1000000000)
                     return "%.2fB".format(bytes/1000000000);
@@ -114,7 +155,7 @@
         };
         return{
             scope:{
-                count:'=count'
+                count:'='
             },
             controller:LeaderBoardController,
             controllerAs:'ctrl',
@@ -129,31 +170,84 @@
         .config(featConfig);
     function featConfig($stateProvider) {
         $stateProvider
-            .state('',{
-
+            .state('feat',{
+                url:'/featured',
+                templateUrl:'/components/featured/featured.html',
+                controller:FeaturedController,
+                controllerAs:'ctrl',
+                bindToController:this
             });
+    };
+    featConfig.$inject=['$stateProvider'];
+    function FeaturedController($state,$http,API_BASE,$sce) {
+        this.feat=undefined;
+        $http.get(API_BASE+'/featured').then(res=>{
+            this.feat=res.data;
+            this.feat.forEach((clip,i)=>{
+                this.feat[i].img=$sce.trustAsResourceUrl(clip.img);
+            });
+        });
     }
+    FeaturedController.$inject=['$state','$http','API_BASE','$sce'];
 })();
+
 (()=>{
     angular
         .module('twitchproject.sug',['ui.router'])
         .config(SuggestionConfig);
     function SuggestionConfig($stateProvider) {
         $stateProvider
-            .state('suggestions',{
-                url:'/suggestions',
+            .state('suggestion',{
+                url:'/suggestion',
                 templateUrl:'/components/suggestion/suggestion.html',
                 controller:SuggestionController,
+                controllerAs:'ctrl',
+                bindToController:this
+            })
+            .state('suggestions',{
+                url:'/suggestions',
+                templateUrl:'/components/suggestion/suggestions.html',
+                controller:SuggestionsController,
                 controllerAs:'ctrl',
                 bindToController:this
             });
     }
     SuggestionConfig.$inject=['$stateProvider'];
-    function SuggestionController($state,$sce) {
-        // "https://formspree.io/"+
-        this.email=$sce.trustAsResourceUrl("https://formspree.io/"+"jcburnside97@gmail.com");
+    function SuggestionController($state,$http,API_BASE) {
+        this.submit=()=>{
+            $http.post(API_BASE+'suggestions',{sug:this.sug})
+        }
     }
-    SuggestionController.$inject=['$state','$sce'];
+    SuggestionController.$inject=['$state'];
+    function SuggestionsController($state,$http,API_BASE) {
+        this.delete=sug=>{
+            $http.delete(API_BASE+'suggestions/'+sug._id)
+            .catch(err=>console.log(err));
+        }
+        this.suggestions=[];
+        $http.get(API_BASE+'suggestions').then(res=>this.suggestions=res.data);
+    }
+    SuggestionsController.$inject=['$state','$http','API_BASE'];
+})();
+(()=>{
+	angular.module('twitchproject')
+		.factory('AuthInterceptor',['SessionToken','API_BASE',
+			function(SessionToken,API_BASE){
+				return {
+					request:function(config){
+						var token=SessionToken.get();
+						if(token&&config.url.indexOf(API_BASE)>-1){
+							config.headers['Authorization']=token;
+						}
+						return config
+					}
+				};
+			}
+		]);
+	angular.module('twitchproject')
+		.config(['$httpProvider',function($httpProvider){
+			return $httpProvider.interceptors.push('AuthInterceptor')
+		}]);
 })();
 (function () {
     angular.module('twitchproject')
@@ -164,26 +258,28 @@
 
                 }
                 BytesService.prototype.getTop = function (amount) {
-                    return $http.get(API_BASE + 'top/' + amount).catch(function (err) {
+                    console.log(amount)
+                    return $http.get(API_BASE + 'top/' + eval(amount)).catch(function (err) {
                         console.log(err);
 
                     });
                 };
                 BytesService.prototype.transfer = function (transferId, amount) {
-                    if (!CU.isSignedIn() || !CU.get().twitchId)
+                    if (!CU.isSignedIn() )
                         throw "NEED TO BE " + CU.isSignedIn() ? "linked to twitch" : "signed in";
                     else
-                        return $http.put(API_BASE + '/transfer/' + CU.get()._id, { to: transferId, amount: amount })
+                        return $http.put(API_BASE + 'transfer/' + CU.get()._id, { to: transferId, amount: amount })
                 };
                 BytesService.prototype.giveRandom = function () {
-                    if (!CU.isSignedIn() || !CU.get().twitchId)
+                    if (!CU.isSignedIn() )
                         throw "NEED TO BE " + CU.isSignedIn() ? "linked to twitch" : "signed in";
                     else
-                        return $http.put(API_BASE + '/rando/' + CU.get()._id)
+                        return $http.put(API_BASE + 'rando/' + CU.get()._id)
                             .catch(function () {
 
                             });
                 };
+                return new BytesService();
             }
         ])
 })();
@@ -256,7 +352,7 @@
 					loginPromise.then(function(res){
 						SessionToken.set(res.data.token);
 						CU.set(res.data.user);
-					});
+					}).catch(err=>console.log(err));
 					return loginPromise;
 				};
 				UsersService.prototype.link = function() {

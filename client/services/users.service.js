@@ -23,7 +23,7 @@
 					loginPromise.then(function(res){
 						SessionToken.set(res.data.token);
 						CU.set(res.data.user);
-					});
+					}).catch(err=>console.log(err));
 					return loginPromise;
 				};
 				UsersService.prototype.link = function() {

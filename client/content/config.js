@@ -1,1 +1,0 @@
-export const EMAIL="jcburnside97@gmail.com";

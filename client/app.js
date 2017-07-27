@@ -1,10 +1,11 @@
-// import * as configs from './config';
 (()=>{
 	var app=angular.module('twitchproject',[
 		'ui.router',
 		'twitchproject.auth.signin',
 		'twitchproject.auth.signup',
-		'twitchproject.sug'
+		'twitchproject.sug',
+		'twitchproject.leader',
+		'twitchproject.byte'
 	]);
 	function config($urlRouterProvider){
 		$urlRouterProvider.otherwise('/signin');

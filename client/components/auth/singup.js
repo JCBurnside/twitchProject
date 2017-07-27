@@ -22,7 +22,6 @@
 				console.log(vm.user);
 				UsersService.create(vm.user).then(function(res){
 					console.log(res);
-
 				});
 			};
 		}

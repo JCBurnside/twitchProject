@@ -1,16 +1,19 @@
-<table>
-    <thead ng-repeat-start>
+<table class="table table-striped">
+    <thead>
         <tr>
+            <td>Rank</td>
             <td>Username</td>
             <td>Bytes</td>
             <td>Date Joined</td>
         </tr>
     </thead>
-    <tbody ng-repeat="item in ctrl.leaders">
+    <tbody ng-repeat="(i,item) in ctrl.leaders">
         <tr>
+            <td>{{i+1}}</td>
             <td>{{item.username}}</td>
             <td>{{item.bytes}}</td>
             <td>{{item.dateJoined}}</td>
+            
         </tr>
     </tbody>
 </table>

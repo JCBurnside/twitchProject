@@ -1,0 +1,22 @@
+body {
+  background-color:#202020;
+  color:#fff;
+}
+.navbar,.navbar-default .navbar-nav>li>a {
+  background-color: #8F27C9 ;
+  color: #FFF !important; 
+  border:none;
+}
+* .btn {
+  background-color: #8F27C9 !important;
+  border:none;
+}
+input[type=text],input[type=number],input[type=password]{
+  color:#606060;
+}
+.table-striped tbody tr:nth-child(even){
+  background-color:#202020 !important;
+}
+.table-striped tbody tr:nth-child(odd){
+  background-color:#303030 !important;
+}

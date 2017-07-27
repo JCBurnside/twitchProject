@@ -7,26 +7,28 @@
 
                 }
                 BytesService.prototype.getTop = function (amount) {
-                    return $http.get(API_BASE + 'top/' + amount).catch(function (err) {
+                    console.log(amount)
+                    return $http.get(API_BASE + 'top/' + eval(amount)).catch(function (err) {
                         console.log(err);
 
                     });
                 };
                 BytesService.prototype.transfer = function (transferId, amount) {
-                    if (!CU.isSignedIn() || !CU.get().twitchId)
+                    if (!CU.isSignedIn() )
                         throw "NEED TO BE " + CU.isSignedIn() ? "linked to twitch" : "signed in";
                     else
-                        return $http.put(API_BASE + '/transfer/' + CU.get()._id, { to: transferId, amount: amount })
+                        return $http.put(API_BASE + 'transfer/' + CU.get()._id, { to: transferId, amount: amount })
                 };
                 BytesService.prototype.giveRandom = function () {
-                    if (!CU.isSignedIn() || !CU.get().twitchId)
+                    if (!CU.isSignedIn() )
                         throw "NEED TO BE " + CU.isSignedIn() ? "linked to twitch" : "signed in";
                     else
-                        return $http.put(API_BASE + '/rando/' + CU.get()._id)
+                        return $http.put(API_BASE + 'rando/' + CU.get()._id)
                             .catch(function () {
 
                             });
                 };
+                return new BytesService();
             }
         ])
 })();

@@ -9,15 +9,15 @@
             <li>This is not for commentary of my skill or prefrence.</li>
         </ul>
     </p>
-    <form action={{ctrl.email}} method="POST">
-        <input type="text" name="Title" placeholder="Title" class="form-control col-md-7 col-xs-push-1"/>
-        <select name="Type" class="form-control col-md-7 col-xs-push-1">
-            <option class="form-control">Game</option>
+    <form>
+        <input type="text" ng-model="ctrl.sug.Title" placeholder="Title" class="form-control col-md-7 col-xs-push-1"/>
+        <select ng-model="ctrl.sug.Type" class="form-control col-md-7 col-xs-push-1">
+            <option class="form-control" selected="selected">Game</option>
             <option class="form-control" value="Website">Website Feedback</option>
             <option class="form-control">Stream</option>
             <option class="form-control">Other</option>
         </select>
-        <textarea rows="3" name="details" class="form-control col-md-7 col-xs-push-1"></textarea>
-        <input type="submit" value="Send" class="form-control col-md-7 col-xs-push-1 btn btn-primary"/>
+        <textarea rows="3" ng-model="ctrl.sug.details" class="form-control col-md-7 col-xs-push-1"></textarea>
+        <input ng-click="ctrl.submit()" value="Send" class="form-control col-md-7 col-xs-push-1 btn btn-primary"/>
     </form>
 </div>

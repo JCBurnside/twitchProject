@@ -1,11 +1,21 @@
 (()=>{
+    angular
+    .module('twitchproject.leader',['ui.router'])
+    .config(leaderConfig);
+    function leaderConfig($stateProvider){
+        $stateProvider
+            .state('leaderboard',{
+                url:'/leaderboard',
+                template:'<leaderboard count="1"/>'
+            });
+    };
     angular.module('twitchproject')
     .directive('leaderboard',function(){
-        LeaderBoardController.$inject=['$scope','$state','CU','ByteService'];
-        function LeaderBoardController($scope,$state,CU,ByteService){
-            
+        LeaderBoardController.$inject=['$scope','$state','CU','BytesService'];
+        function LeaderBoardController($scope,$state,CU,BytesService){
+            console.log($scope)
             this.leaders=undefined;
-            this.getLeaders=()=>ByteService.getTop($scope.count||10).then(res=>this.leaders=res.data);
+            BytesService.getTop($scope.count||10).then(res=>this.leaders=res.data);
             this.format=bytes=>{
                 if(bytes/1000000000)
                     return "%.2fB".format(bytes/1000000000);
@@ -18,7 +28,7 @@
         };
         return{
             scope:{
-                count:'=count'
+                count:'='
             },
             controller:LeaderBoardController,
             controllerAs:'ctrl',

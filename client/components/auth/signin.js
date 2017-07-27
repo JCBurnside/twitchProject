@@ -18,7 +18,6 @@
 		this.login=()=>{
 			UsersService.login(this.user).then(res=>{
 				console.log(res);
-
 			});
 		};
 	}

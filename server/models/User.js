@@ -2,8 +2,10 @@ var bcrypt = require('bcryptjs'),
 	jwt = require('jsonwebtoken');
 module.exports = function (mongoose) {
 	var US = new mongoose.Schema({
-		username: { type: String },
-		password: { type: String }
+		username: { type: String,
+					unique:true},
+		password: { type: String },
+		bytes:Number
 	});
 	US.pre('save', function (next) {
 		var user = this;
